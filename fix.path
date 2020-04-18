@@ -227,3 +227,29 @@ index 72a566bdc..babb9e1dd 100644
 -  config.active_storage.service = :amazon
 +  config.active_storage.service = :local
  end
+diff --git a/app/views/community_mailer/_community_update_listing-v2.html.haml b/app/views/community_mailer/_community_update_listing-v2.html.haml
+index eea731718..32e602a9a 100644
+--- a/app/views/community_mailer/_community_update_listing-v2.html.haml
++++ b/app/views/community_mailer/_community_update_listing-v2.html.haml
+@@ -2,7 +2,7 @@
+   - if listing.listing_images.present?
+     %td.email-listings-item-image{width: 156}
+       = link_to listing_url(@url_params.merge({id: listing.id})) do
+-        = image_tag(listing.listing_images.first.newsletter_email_image_url, class: "listing_main_image", alt: listing.title, height: "116", width: "150")
++        = image_tag("https://www.domain.name"+listing.listing_images.first.newsletter_email_image_url, class: "listing_main_image", alt: listing.title, height: "116", width: "150")
+ 
+   %td.email-listings-text{colspan: listing.listing_images.empty? ? '2' : '1', class: listing.listing_images.empty? ? 'no-padding' : ''}
+     %small
+diff --git a/app/views/layouts/email-v2.html.haml b/app/views/layouts/email-v2.html.haml
+index 0e69fbac5..0febadb6c 100644
+--- a/app/views/layouts/email-v2.html.haml
++++ b/app/views/layouts/email-v2.html.haml
+@@ -17,7 +17,7 @@
+                 - if community && community.wide_logo.present?
+                   %tr
+                     %td.logo
+-                      = image_tag community.wide_logo.url(:header), alt: community_name, style: 'margin: 0 auto;'
++                      = image_tag "https://www.domain.name"+community.wide_logo.url(:header), alt: community_name, style: 'margin: 0 auto;'
+                 - elsif @community
+                   %tr
+                     %td.community-name
