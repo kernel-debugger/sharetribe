@@ -1,0 +1,56 @@
+diff --git a/app/views/homepage/_grid_item.haml b/app/views/homepage/_grid_item.haml
+index 48fe64a1d..061bbeb52 100644
+--- a/app/views/homepage/_grid_item.haml
++++ b/app/views/homepage/_grid_item.haml
+@@ -1,25 +1,27 @@
+-- frontpage_fragment_cache("grid_item", listing) do
+-  .home-fluid-thumbnail-grid-item
+-    %div
+-      -# Listing image
+-      = render :partial => "layouts/grid_item_listing_image", :locals => {:listing => listing, :modifier_class => ""}
+-
+-      -# Listing author details
+-      .home-fluid-thumbnail-grid-author
+-        .home-fluid-thumbnail-grid-author-avatar
+-          = link_to(person_path(username: listing.author.username)) do
+-            = image_tag(listing.author.avatar.thumb || missing_avatar(:thumb), :class => "home-fluid-thumbnail-grid-author-avatar-image")
+-
+-        - distance = Maybe(listing.distance).or_else(nil)
++.listings__listing
++  = link_to(listing_path(listing.url)) do
++    .listing_image_wrap
++      - with_first_listing_image(listing) do |first_image_url|
++        .listings__listing-image{style: "background-image: url(#{first_image_url})"}
++    %h3.listings__listing-title= listing.title
++  .listings__listing-info
++    %div{class: "listings__price-container listings__price-container"}
++      - if listing.price
++        %span.listings__price-amount= MoneyViewUtils.to_humanized(listing.price)
++        - price_unit = price_quantity_slash_unit(listing)
++        - if !price_unit.blank?
++          - price_text = " " + price_unit
++          %span.listings__price-unit
++            \ #{price_text}
++      - else
++        %span.listings__price-shape-name= shape_name(listing)
++    %a{class: "listings__author-link listings__author-link", href: "#{person_path(username: listing.author.username)}"}
++      .listings__author-container
++        .listings__author-avatar-container
++          - if listing.author.avatar.thumb
++            .listings__author-avatar{style: "background-image: url(#{listing.author.avatar.thumb})"}
++          - else
++            %svg{height: "14", viewbox: "0 0 14 14", width: "14", xmlns: "http://www.w3.org/2000/svg"}
++              %path{d: "M3.445 5.212c0-.096.007-.19.012-.284.397.118.836.19 1.25.19 1.008 0 2.11-.46 2.785-1.108.602.796 1.31 1.174 2.202 1.174.193 0 .397-.022.61-.057l.002.085c0 2.336-1.538 4.236-3.43 4.236-1.892 0-3.43-1.9-3.43-4.236zM6.877.977c1.595 0 2.936 1.354 3.317 3.18-1.02.186-1.632-.148-2.244-1.223l-.44-.774-.412.79c-.324.624-1.464 1.192-2.39 1.192-.363 0-.772-.07-1.11-.186.436-1.724 1.74-2.98 3.28-2.98zm2.627 10.298v-1.89c1.074-.952 1.774-2.466 1.774-4.173C11.278 2.338 9.304 0 6.878 0c-2.43 0-4.404 2.338-4.404 5.212 0 1.66.66 3.14 1.686 4.094v1.974L0 13.046l.378.9 4.754-2.018V9.996c.535.275 1.125.43 1.745.43.585 0 1.144-.14 1.655-.387v1.894L13.637 14l.363-.906-4.496-1.82z", fill: "#919599", "fill-rule" => "evenodd"}  
+         - name = PersonViewUtils.person_entity_display_name(listing.author, @current_community.name_display_type)
+-        - if(!show_distance || distance.blank?)
+-          = link_to(person_path(username: listing.author.username), :class => "home-fluid-thumbnail-grid-author-name", title: name) do
+-            = name
+-        - else
+-          .home-fluid-thumbnail-grid-details
+-            = link_to(person_path(username: listing.author.username), class: "home-fluid-thumbnail-grid-details-author-name", title: name) do
+-              = name
+-            - dist = format_distance(distance)
+-            - dist_string = "#{dist} #{listing.distance_unit}"
+-            .home-fluid-thumbnail-grid-details-distance{title: dist_string}
+-              = dist_string
++        %span.listings__author-name= name
